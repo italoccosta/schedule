@@ -1,4 +1,4 @@
-package com.italoccosta.schedule.entities;
+package com.italoccosta.schedule.model.entities;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,8 +13,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class Agendamento {
 
     @Id
@@ -40,31 +44,7 @@ public class Agendamento {
     }
 
     
-    Boolean podeAlterarOuCancelar() {
-        return LocalDate.now().isBefore(dataAtendimento.minusDays(3));
-    }
-    
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDate getDataAtendimento() {
-        return dataAtendimento;
-    }
-
-    public void setDataAtendimento(LocalDate dataAtendimento) {
-        this.dataAtendimento = dataAtendimento;
-    }
-
-    public StatusAgendamento getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusAgendamento status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getCriadoEm() {
-        return criadoEm;
+    public boolean podeAlterarOuCancelar() {
+        return LocalDate.now().isBefore(this.dataAtendimento.minusDays(3));
     }
 }
