@@ -1,6 +1,7 @@
 package com.italoccosta.schedule.services.implementation;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,18 +31,22 @@ public class AgendamentoServiceImpl implements AgendamentoService {
     public AgendamentoDTO novoAgendamento(Agendamento novo, Long clienteId) {
         Cliente cliente = clRepository.findById(clienteId)
             .orElseThrow(() -> new ClienteNaoCadastradoException("Cliente não cadastrado!"));
-
-        if (novo.getDataAtendimento().isAfter(LocalDate.now())){
-            novo.setCliente(cliente);
-            agRepository.save(novo);
-            return new AgendamentoDTO(novo.getId(),
-             novo.getDataAtendimento(),
-             novo.getHora(),
-             novo.getStatus().toString(),
-             novo.getCriadoEm(),
-             cliente.getNome());
+        LocalDateTime comparar = LocalDateTime.of(novo.getDataAtendimento(), novo.getHora());
+       
+        if (comparar.isAfter(LocalDateTime.now())){
+                novo.setCliente(cliente);
+                agRepository.save(novo);
+            
+                return new AgendamentoDTO(
+                    novo.getId(),
+                    novo.getDataAtendimento(),
+                    novo.getHora(),
+                    novo.getStatus().toString(),
+                    novo.getCriadoEm(),
+                    cliente.getNome()
+                );
         }else{
-            throw new DataInvalidaException("A data do atendimento precisa ser futura!");
+            throw new DataInvalidaException("Data e hora do atendimento precisam ser futuras!");
         }
     }
     
