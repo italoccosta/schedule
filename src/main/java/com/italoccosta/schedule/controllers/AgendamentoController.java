@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.italoccosta.schedule.model.dto.AgendamentoDTO;
 import com.italoccosta.schedule.model.entities.Agendamento;
 import com.italoccosta.schedule.services.AgendamentoService;
 
@@ -29,10 +30,10 @@ public class AgendamentoController {
     }
 
     @PostMapping("/{clienteId}")
-    ResponseEntity<Agendamento> criarAgendamento(@RequestBody Agendamento novAgendamento, @PathVariable Long clienteId) {
-        agService.novoAgendamento(novAgendamento, clienteId);
+    ResponseEntity<AgendamentoDTO> criarAgendamento(@RequestBody Agendamento novAgendamento, @PathVariable Long clienteId) {
+        AgendamentoDTO novoDTO = agService.novoAgendamento(novAgendamento, clienteId);
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(novAgendamento);
+            .body(novoDTO);
     }
 
     @PutMapping("/reagendar/{id}")

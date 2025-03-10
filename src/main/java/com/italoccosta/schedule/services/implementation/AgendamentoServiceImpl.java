@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.italoccosta.schedule.enums.StatusAgendamento;
 import com.italoccosta.schedule.exceptions.AgendamentoNaoEncontradoException;
+import com.italoccosta.schedule.exceptions.ClienteNaoCadastradoException;
 import com.italoccosta.schedule.exceptions.DataInvalidaException;
+import com.italoccosta.schedule.model.dto.AgendamentoDTO;
 import com.italoccosta.schedule.model.entities.Agendamento;
 import com.italoccosta.schedule.model.entities.Cliente;
 import com.italoccosta.schedule.model.repository.AgendamentoRepository;
@@ -25,11 +27,19 @@ public class AgendamentoServiceImpl implements AgendamentoService {
     private CleinteRepository clRepository;
 
     @Override
-    public void novoAgendamento(Agendamento novo, Long clienteId) {
-        Cliente cliente = clRepository.findById(clienteId).orElseThrow(null);
+    public AgendamentoDTO novoAgendamento(Agendamento novo, Long clienteId) {
+        Cliente cliente = clRepository.findById(clienteId)
+            .orElseThrow(() -> new ClienteNaoCadastradoException("Cliente não cadastrado!"));
+
         if (novo.getDataAtendimento().isAfter(LocalDate.now())){
             novo.setCliente(cliente);
             agRepository.save(novo);
+            return new AgendamentoDTO(novo.getId(),
+             novo.getDataAtendimento(),
+             novo.getHora(),
+             novo.getStatus().toString(),
+             novo.getCriadoEm(),
+             cliente.getNome());
         }else{
             throw new DataInvalidaException("A data do atendimento precisa ser futura!");
         }
@@ -63,6 +73,7 @@ public class AgendamentoServiceImpl implements AgendamentoService {
     @Override
     public Iterable<Agendamento> exibirTodos() {
         return agRepository.findAll();
+        
     }
     
     private Agendamento encontrarAgendamento(Long id) {
