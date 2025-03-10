@@ -10,21 +10,21 @@ import com.italoccosta.schedule.services.ClienteService;
 
 
 @Service
-public class CleinteServiceImpl implements ClienteService {
+public class ClienteServiceImpl implements ClienteService {
 
     @Autowired
     private CleinteRepository clRepository;
 
-
     @Override
-    public void cadastrarCleinte(Cliente cliente) {
+    public void cadastrarCliente(Cliente cliente) {
         clRepository.save(cliente);
     }
 
+    
+
     @Override
     public void atualizarTelefone(Long id, String telefone) {
-        Cliente temp = clRepository.findById(id)
-        .orElseThrow(() -> new ClienteNaoCadastradoException("Cliente não encontrado!"));
+        Cliente temp = encontrarCliente(id);
 
             temp.setTelefone(telefone);
             clRepository.save(temp);
@@ -32,8 +32,7 @@ public class CleinteServiceImpl implements ClienteService {
 
     @Override
     public void excluirCadastro(Long id) {
-        Cliente temp = clRepository.findById(id)
-        .orElseThrow(() -> new ClienteNaoCadastradoException("Cliente não encontrado!"));
+        Cliente temp = encontrarCliente(id);
             
         clRepository.delete(temp);
     }
@@ -42,4 +41,13 @@ public class CleinteServiceImpl implements ClienteService {
     public Iterable<Cliente> exibirTodos() {
         return clRepository.findAll();
     }
+
+    private Cliente encontrarCliente(Long id) {
+        Cliente temp = clRepository.findById(id)
+            .orElseThrow(() -> new ClienteNaoCadastradoException("Cliente não cadastrado"));
+        return temp;
+    }
+
+
+    
 }

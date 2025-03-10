@@ -2,7 +2,10 @@ package com.italoccosta.schedule.model.entities;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.italoccosta.schedule.enums.StatusAgendamento;
 
 import jakarta.persistence.Entity;
@@ -13,10 +16,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Transactional
 @Getter
 @Setter
 public class Agendamento {
@@ -25,20 +30,31 @@ public class Agendamento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonFormat(pattern = "dd/MM/yy")
     private LocalDate dataAtendimento;
+
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime hora;
 
     @Enumerated(EnumType.STRING)
     private StatusAgendamento status;
+
+    @JsonFormat(pattern = "dd/MM/yy HH:mm")
     private LocalDateTime criadoEm;
 
+    @JoinColumn(name = "cliente_id")
     @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
+    public Agendamento(){
+        status = StatusAgendamento.AGENDADO;
+        criadoEm = LocalDateTime.now();
+    }
 
-    public Agendamento(Cliente cliente, LocalDate dataAtendimento) {
+    
+    public Agendamento(LocalDate dataAtendimento, LocalTime hora) {
+        this.hora = hora;
         this.dataAtendimento = dataAtendimento;
-        this.cliente = cliente;
         status = StatusAgendamento.AGENDADO;
         criadoEm = LocalDateTime.now();
     }
