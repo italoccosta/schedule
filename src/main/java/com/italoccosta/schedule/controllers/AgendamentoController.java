@@ -1,8 +1,5 @@
 package com.italoccosta.schedule.controllers;
 
-
-import java.time.LocalDate;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.italoccosta.schedule.model.dto.AgendamentoDTO;
+import com.italoccosta.schedule.model.dto.ReagendarDTO;
 import com.italoccosta.schedule.model.entities.Agendamento;
 import com.italoccosta.schedule.services.AgendamentoService;
 
@@ -38,7 +36,7 @@ public class AgendamentoController {
     }
 
     @PutMapping("/reagendar/{id}")
-    ResponseEntity<Void> reagendar(@PathVariable Long id,@RequestBody LocalDate novaData) {
+    ResponseEntity<Void> reagendar(@PathVariable Long id,@RequestBody ReagendarDTO novaData) {
         agService.reAgendar(id, novaData);
         return ResponseEntity.ok().build();
     }

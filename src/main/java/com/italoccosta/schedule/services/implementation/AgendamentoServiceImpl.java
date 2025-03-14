@@ -1,6 +1,5 @@
 package com.italoccosta.schedule.services.implementation;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import com.italoccosta.schedule.exceptions.AgendamentoNaoEncontradoException;
 import com.italoccosta.schedule.exceptions.ClienteNaoCadastradoException;
 import com.italoccosta.schedule.exceptions.DataInvalidaException;
 import com.italoccosta.schedule.model.dto.AgendamentoDTO;
+import com.italoccosta.schedule.model.dto.ReagendarDTO;
 import com.italoccosta.schedule.model.entities.Agendamento;
 import com.italoccosta.schedule.model.entities.Cliente;
 import com.italoccosta.schedule.model.repository.AgendamentoRepository;
@@ -65,12 +65,18 @@ public class AgendamentoServiceImpl implements AgendamentoService {
 
     
     @Override
-    public void reAgendar(Long id, LocalDate novaData) {
+    public void reAgendar(Long id, ReagendarDTO novaDataEHora) {
         Agendamento temp = encontrarAgendamento(id);
+        LocalDateTime comparar = LocalDateTime.of(novaDataEHora.novaData(), novaDataEHora.novaHora());
         
         if (temp.podeAlterarOuCancelar()) {
-            temp.setDataAtendimento(novaData);
-            agRepository.save(temp);
+            if(comparar.isAfter(LocalDateTime.now())){
+                temp.setDataAtendimento(novaDataEHora.novaData());
+                temp.setHora(novaDataEHora.novaHora());
+                agRepository.save(temp);
+            }else {
+                throw new DataInvalidaException("A data e hora do atendomento precisam ser futuras");
+            }
         }else {
             throw new DataInvalidaException("Prazo indisponível! O atendimento será realizado em menos de 72h");
         }
