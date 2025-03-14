@@ -1,0 +1,2 @@
+ALTER TABLE agendamentos DROP COLUMN id;
+ALTER TABLE agendamentos ADD COLUMN id SERIAL PRIMARY KEY;

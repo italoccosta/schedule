@@ -17,6 +17,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
@@ -41,7 +42,7 @@ public class Agendamento {
     private LocalTime hora;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "status_atendimento")
+    @Column(name = "status_agendamento", nullable = false)
     private StatusAgendamento status;
     
     @JsonFormat(pattern = "dd/MM/yy HH:mm")
@@ -53,20 +54,23 @@ public class Agendamento {
     private Cliente cliente;
 
     public Agendamento(){
-        status = StatusAgendamento.AGENDADO;
-        criadoEm = LocalDateTime.now();
+        
     }
 
     
     public Agendamento(LocalDate dataAtendimento, LocalTime hora) {
         this.hora = hora;
         this.dataAtendimento = dataAtendimento;
-        status = StatusAgendamento.AGENDADO;
-        criadoEm = LocalDateTime.now();
     }
 
     
     public boolean podeAlterarOuCancelar() {
         return LocalDate.now().isBefore(this.dataAtendimento.minusDays(3));
+    }
+
+    @PrePersist
+    public void setStatusEHoraCriacao(){
+        this.status = StatusAgendamento.AGENDADO;
+        this.criadoEm = LocalDateTime.now();
     }
 }

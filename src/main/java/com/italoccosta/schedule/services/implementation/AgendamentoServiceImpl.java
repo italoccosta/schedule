@@ -35,6 +35,7 @@ public class AgendamentoServiceImpl implements AgendamentoService {
        
         if (comparar.isAfter(LocalDateTime.now())){
                 novo.setCliente(cliente);
+                
                 agRepository.save(novo);
             
                 return new AgendamentoDTO(
